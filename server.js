@@ -4,7 +4,7 @@ const cors = require("cors");
 const nodemailer = require("nodemailer");
 require("dotenv").config();
 
-const Contact = require("./models/contact");
+const contact = require("./models/contact");
 
 const app = express();
 
