@@ -4,7 +4,7 @@ const cors = require("cors");
 const nodemailer = require("nodemailer");
 require("dotenv").config();
 
-const Contact = require("./models/Contact");
+const Contact = require("./models/contact");
 
 const app = express();
 
@@ -27,7 +27,7 @@ app.post("/api/contact", async (req, res) => {
     const { name, email, message } = req.body;
 
     // Save to DB
-    const newContact = new Contact({ name, email, message });
+    const newContact = new contact({ name, email, message });
     await newContact.save();
 
     // Email Setup
