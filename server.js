@@ -27,8 +27,8 @@ app.post("/api/contact", async (req, res) => {
     const { name, email, message } = req.body;
 
     // Save to DB
-    const newContact = new contact({ name, email, message });
-    await newContact.save();
+    const newcontact = new contact({ name, email, message });
+    await newcontact.save();
 
     // Email Setup
     const transporter = nodemailer.createTransport({
