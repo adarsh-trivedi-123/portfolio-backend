@@ -18,53 +18,53 @@ mongoose.connect(process.env.MONGO_URI)
 .then(()=>console.log("MongoDB Connected ✅"))
 .catch(err=>console.log("Mongo Error ❌",err));
 
-
 /* =========================
    Test Route
 ========================= */
-app.get("/", (req, res) => {
+app.get("/",(req,res)=>{
   res.send("Portfolio Backend Running 🚀");
 });
-
 
 /* =========================
    CONTACT API
 ========================= */
-app.post("/api/contact", async (req, res) => {
+app.post("/api/contact",async(req,res)=>{
 
-  try {
+  try{
 
-    const { name, email, message } = req.body;
+    const {name,email,message} = req.body;
 
     // Save to MongoDB
-    const newContact = new Contact({
-      name,
-      email,
-      message
-    });
-
+    const newContact = new Contact({name,email,message});
     await newContact.save();
 
-    console.log("Message saved in DB ✅");
+    console.log("Saved to MongoDB");
 
-    // Send Email
-    try {
+    /* =========================
+       Send Email
+    ========================= */
 
-      const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-          user: process.env.EMAIL_USER,
-          pass: process.env.EMAIL_PASS
-        }
-      });
+    const transporter = nodemailer.createTransport({
 
-      await transporter.sendMail({
+      host:"smtp.gmail.com",
+      port:587,
+      secure:false,
 
-        from: process.env.EMAIL_USER,
-        to: process.env.EMAIL_USER,
-        subject: "New Portfolio Contact Message",
+      auth:{
+        user:process.env.EMAIL_USER,
+        pass:process.env.EMAIL_PASS
+      }
 
-        text: `
+    });
+
+    await transporter.sendMail({
+
+      from:process.env.EMAIL_USER,
+      to:process.env.EMAIL_USER,
+
+      subject:"New Portfolio Contact Message",
+
+      text:`
 Name: ${name}
 Email: ${email}
 
@@ -72,40 +72,30 @@ Message:
 ${message}
 `
 
-      });
-
-      console.log("Email sent successfully ✅");
-
-    } catch (emailError) {
-
-      console.log("Email sending failed ❌", emailError.message);
-
-    }
-
-    res.status(201).json({
-      message: "Message Saved Successfully ✅"
     });
 
-  } catch (error) {
+    console.log("Email Sent");
 
-    console.log("Server Error ❌", error.message);
+    res.status(200).json({
+      message:"Message Saved & Email Sent ✅"
+    });
+
+  }
+
+  catch(error){
+
+    console.log("Server Error:",error);
 
     res.status(500).json({
-      error: error.message
+      error:"Internal Server Error"
     });
 
   }
 
 });
 
-
-/* =========================
-   Server Start
-========================= */
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT,()=>{
-
   console.log(`Server running on port ${PORT}`);
-
 });
